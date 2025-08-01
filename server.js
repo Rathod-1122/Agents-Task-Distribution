@@ -1,57 +1,14 @@
 const express = require('express')
 const mongoose = require('mongoose')
-const jwt = require('jsonwebtoken')
 const multer = require('multer')
 const cors = require ('cors')
 
 const app = express();
 app.use(cors());
 
-const upload=multer({dest:'uploads'})
 
 app.listen(4444,()=>{
   console.log('server is running on the port :4444')
-})
-
-app.get('/login/:email/:password',async(req,res)=>{
-
-  console.log('inside the login request')
-  let result = await users.find();
-  // console.log(result)
-  if(result.length>0){
-    for(i=0;i<result.length;i++){
-      decrypt=jwt.verify(result[i].userEmailAndPasswordToken,'key');
-      console.log(decrypt)
-      if(decrypt.email==req.params.email) {
-        if(decrypt.password==req.params.password){
-          return res.json({status:'success',message:'user loged in successfully'})
-        }
-        else{
-          return res.json({status:'failed',message:'enter the valid password'})
-        }
-      } 
-    }
-    return res.json({status:'failed',message:'enter the valid email'})
-  }
-  else{
-    return res.json({message:'There are no any users in the database,please register first'})
-  }
-
-})
-
-app.post('/register',upload.none(),async(req,res)=>{
-
-  console.log('inside the register request')
-  let token = jwt.sign({email:req.body.email,password:req.body.password},'key')
-
-  let user1 = new users({
-    userEmailAndPasswordToken:token
-  })
-
-  users.insertMany([user1,])
-
-  console.log('user created successfully')
-  res.json({status:'success',message:'user created successfully'})
 })
 
 
@@ -68,13 +25,9 @@ let connectToDB = async()=>{
 }
 connectToDB();
 
-let userSchema = new mongoose.Schema({
-  userEmailAndPasswordToken:String
-})
 
-let users = new mongoose.model('users',userSchema);
+app.use('/', require('./routes/register'));
+app.use('/', require('./routes/login'));
+app.use('/', require('./routes/saveThedistributedData'));
+app.use('/', require('./routes/fetchDistributedData'));
 
-
-
-const distributeRoutes = require('./routes/distribute');
-app.use('/api/distribute', distributeRoutes);

@@ -5,7 +5,7 @@ const router = express.Router();
 const DistributedTask = require('../models/DistributedTask');
 
 // Save distributed data
-router.post('/save', async (req, res) => {
+router.post('/saveDistributedData', async (req, res) => {
   try {
     console.log('the distributed data is :',req.body)
     const data = req.body; // should be an object with agentEmail as key
@@ -25,14 +25,6 @@ router.post('/save', async (req, res) => {
   }
 });
 
-// Fetch all distributed tasks
-router.get('/fetch', async (req, res) => {
-  try {
-    const tasks = await DistributedTask.find({});
-    res.json(tasks);
-  } catch (err) {
-    res.status(500).json({ error: 'Error fetching tasks' });
-  }
-});
+
 
 module.exports = router;

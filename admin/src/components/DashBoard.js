@@ -99,7 +99,7 @@ function DashBoard() {
   const saveDistributedDataToDB = async () => {
   try {
     console.log('the distributed data in the client side is:',distributedData)
-    await axios.post('/api/distribute/save', distributedData);
+    await axios.post('/saveDistributedData', distributedData);
     alert("Distributed data saved to database.");
   } catch (error) {
     console.error("Error saving:", error);
@@ -109,7 +109,7 @@ function DashBoard() {
 
 const fetchDistributedDataFromDB = async () => {
   try {
-    const res = await axios.get('/api/distribute/fetch');
+    const res = await axios.get('/fetchDistributedData');
     const newData = {};
     res.data.forEach(item => {
       newData[item.agentEmail] = item.tasks;
