@@ -1,0 +1,15 @@
+.App {
+  text-align: center;
+}
+
+form{
+  display: inline-block;
+  background-color: #0071cd;
+}
+/* form div{
+  display: inline-block;
+} */
+ form label{
+  display: inline-block;
+  width: 100px;
+ }
