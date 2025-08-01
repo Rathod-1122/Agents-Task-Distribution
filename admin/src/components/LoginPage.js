@@ -1,6 +1,7 @@
 import React, { useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import './Login.css'
 
 function LoginPage() {
 
@@ -51,7 +52,7 @@ function LoginPage() {
             }}>Login</button>
           </div>
         </fieldset>
-      </form>
+      </form><br></br>
       <Link to='/Register'>Register here if you have not Registerd</Link>
     </div>
   )

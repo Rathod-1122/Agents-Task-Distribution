@@ -38,7 +38,7 @@ function Register() {
             }}>Register</button>
           </div>
         </fieldset>
-      </form>
+      </form><br></br>
       <Link to='/'>Login</Link>
     </div>
   )
