@@ -1,12 +1,9 @@
+// models/UserRegisterSchema.js
 
-
-// const express = require('express');
-// const router = express.Router();
-// const DistributedTask = require('../models/UserRegisterSchema');
 const mongoose = require('mongoose');
 
 let userSchema = new mongoose.Schema({
-  userEmailAndPasswordToken:String
+  userEmailAndPasswordToken: String
 })
 
-module.exports  =  mongoose.model('users',userSchema);
+module.exports = mongoose.model('users', userSchema);

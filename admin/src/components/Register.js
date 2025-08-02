@@ -3,24 +3,25 @@ import axios from 'axios'
 import { Link } from 'react-router-dom';
 
 function Register() {
-  let emailRef=useRef();
-  let passwordRef=useRef();
+  let emailRef = useRef();
+  let passwordRef = useRef();
 
-  axios.defaults.baseURL='http://localhost:4444'
+  axios.defaults.baseURL = 'http://localhost:4444';
 
-  let registerUser = async()=>{
+  let registerUser = async () => {
 
     let dataToSend = new FormData();
-    dataToSend.append('email',emailRef.current.value);
-    dataToSend.append('password',passwordRef.current.value);
+    dataToSend.append('email', emailRef.current.value);
+    dataToSend.append('password', passwordRef.current.value);
 
-    let response = await axios.post('/register',dataToSend);
+    let response = await axios.post('/register', dataToSend);
 
     alert(response.data.message)
 
   }
   return (
-    <div className='App'>
+    <div className='registerform-container'>
+      {/* Form for registering as Admin user */}
       <form>
         <fieldset>
           <legend>Register</legend>
@@ -33,12 +34,13 @@ function Register() {
             <input type='text' ref={passwordRef}></input>
           </div>
           <div>
-            <button type='button' onClickCapture={()=>{
+            <button type='button' onClickCapture={() => {
               registerUser();
             }}>Register</button>
           </div>
         </fieldset>
       </form><br></br>
+      {/* Link to go back to the login page */}
       <Link to='/'>Login</Link>
     </div>
   )

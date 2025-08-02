@@ -1,10 +1,9 @@
 //-------------- Dash Board ---------------------
 
-import React, { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useRef, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Papa from 'papaparse';
-import './DashBoard.css';
 
 function DashBoard() {
   axios.defaults.baseURL = 'http://localhost:4444';
@@ -72,21 +71,22 @@ function DashBoard() {
   };
 
   const distributeTasksToAgents = () => {
+    console.log('listOfAgents:', listOfAgents);
     if (listOfAgents.length < 5) {
       alert('Add at least 5 agents before distributing tasks.');
-      return;
+      return
     }
 
     const agents = [...listOfAgents.slice(0, 5)];
     const distribution = {};
 
     agents.forEach((agent, index) => {
-      distribution[agent.email || `Agent-${index + 1}`] = [];
+      distribution[agent.email || `Agent-${ index + 1 }`] = [];
     });
 
     taskList.forEach((task, idx) => {
       const agentIndex = idx % 5;
-      const agentKey = agents[agentIndex].email || `Agent-${agentIndex + 1}`;
+      const agentKey = agents[agentIndex].email || `Agent-${ agentIndex + 1 }`;
       distribution[agentKey].push(task);
     });
 
@@ -95,10 +95,14 @@ function DashBoard() {
   };
 
   const saveDistributedDataToDB = async () => {
+    console.log('the length of the distributedData: ', distributedData.length)
     try {
-      console.log('the distributed data in the client side is:', distributedData);
-      await axios.post('/saveDistributedData', distributedData);
-      alert('Distributed data saved to database.');
+      if (distributedData.length === undefined) {
+        alert('unable to save the data because there is no The distributed data')
+        return;
+      }
+      let response = await axios.post('/saveDistributedData', distributedData);
+      alert(response.data.message);
     } catch (error) {
       console.error('Error saving:', error);
       alert('Failed to save distributed data.');
@@ -108,11 +112,14 @@ function DashBoard() {
   const fetchDistributedDataFromDB = async () => {
     try {
       const res = await axios.get('/fetchDistributedData');
+      // console.log('fetchedDistributedDataFromDB is :',res.data)
       const newData = {};
+      if (res.data.length === 0)
+        alert('There is no saved distributed data')
       res.data.forEach((item) => {
         newData[item.agentEmail] = item.tasks;
       });
-      console.log('the fetchDistributedDataFromDB is :', newData);
+      // console.log('the fetchDistributedDataFromDB is :', newData);
       setDistributedData(newData);
     } catch (error) {
       console.error('Error fetching:', error);
@@ -121,43 +128,45 @@ function DashBoard() {
 
   return (
     <div className='dashboard-container'>
-      <h1 className='dashboard-title'>Dashboard</h1>
+      <h1 className='dashboard-title'><u>Dashboard</u></h1>
       <h3 className='dashboard-subtitle'>{location.state?.message || 'Welcome!'}</h3>
 
+      {/* Form for Adding the Agents */}
       <form className='agent-form'>
-          <h3><u>Add Agent</u></h3>
-          <div>
-            <label>Name</label>
-            <input type='text' ref={nameRef} />
-          </div>
-          <div>
-            <label>Email</label>
-            <input type='email' ref={emailRef} />
-          </div>
-          <div>
-            <label>Phone Number</label>
-            <input
-              ref={phoneNoRef}
-              type='tel'
-              name='phone'
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder='+91 98765 43210'
-              pattern='^\\+\\d{1,3}\\s?\\d{10}$'
-              required
-            />
-          </div>
-          <div>
-            <label>Password</label>
-            <input type='text' ref={passwordRef} />
-          </div>
-          <div>
-            <button type='button' onClick={handleAddAgent}>
-              Add Agent
-            </button>
-          </div>
+        <h3><u>Add Agent</u></h3>
+        <div>
+          <label>Name</label>
+          <input type='text' ref={nameRef} />
+        </div>
+        <div>
+          <label>Email</label>
+          <input type='email' ref={emailRef} />
+        </div>
+        <div>
+          <label>Phone Number</label>
+          <input
+            ref={phoneNoRef}
+            type='tel'
+            name='phone'
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder='+91 98765 43210'
+            pattern='^\\+\\d{1,3}\\s?\\d{10}$'
+            required
+          />
+        </div>
+        <div>
+          <label>Password</label>
+          <input type='text' ref={passwordRef} />
+        </div>
+        <div>
+          <button type='button' onClick={handleAddAgent}>
+            Add Agent
+          </button>
+        </div>
       </form>
 
+      {/* Tabel which shows the Added Agents data */}
       <table className='agent-table'>
         <caption>Added Agents Data</caption>
         <thead>
@@ -180,26 +189,37 @@ function DashBoard() {
         </tbody>
       </table>
 
+      {/* CSV File upload */}
       <div className='file-upload'>
-        <h3>Upload CSV File (FirstName, Phone, Notes)</h3>
+        <h3>Upload CSV File(Task File)</h3>
         <input type='file' accept='.csv, .xlsx, .xls' onChange={handleFileUpload} />
       </div>
 
+      {/* button for  distributing Tasks To Agents*/}
       <div className='action-buttons'>
         <button
           onClick={() => {
             distributeTasksToAgents();
-            setTimeout(saveDistributedDataToDB, 300);
           }}
         >
-          Distribute & Save
+          Distribute Tasks To Agents
+        </button>
+        {/* button for Saving The Distributed Data To DataBase*/}
+        <button
+          onClick={() => {
+            saveDistributedDataToDB();
+          }}
+        >
+          Save The Distributed Data To DataBase
         </button>
 
-        <button onClick={fetchDistributedDataFromDB}>Load Distributed Data from DB</button>
+        {/* button for showing distributed data to the agents from the data base */}
+        <button onClick={fetchDistributedDataFromDB}>Show the distributed data here</button>
       </div>
 
-      <h2>📦 Distributed Tasks to Agents</h2>
+      {/* div container which shows the distributed task to the agents */}
       <div className='distributed-tasks-container'>
+        <h2>📦 Distributed Tasks to Agents</h2>
         {Object.entries(distributedData).map(([email, tasks]) => (
           <div key={email} className='agent-card'>
             <h3>{email}</h3>
@@ -214,6 +234,11 @@ function DashBoard() {
             </ul>
           </div>
         ))}
+      </div>
+
+      {/* Button for logout from the dashboard */}
+      <div>
+        <button type='button'><Link to='/'>Logout</Link></button>
       </div>
     </div>
   );

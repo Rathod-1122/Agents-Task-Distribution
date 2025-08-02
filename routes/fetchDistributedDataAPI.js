@@ -3,7 +3,7 @@
 
 const express = require('express');
 const router = express.Router();
-const DistributedTask = require('../models/DistributedTask');
+const DistributedTask = require('../models/DistributedTaskSchema');
 
 // Fetch all distributed tasks
 router.get('/fetchDistributedData', async (req, res) => {
